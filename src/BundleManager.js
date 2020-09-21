@@ -265,6 +265,7 @@ class BundleManager {
       items: [],
       npcs: [],
       rooms: [],
+      dialogs: [],
     };
 
     const scriptPath = this._getAreaScriptPath(bundle, areaName);
@@ -287,6 +288,8 @@ class BundleManager {
     definition.npcs   = await this.loadEntities(bundle, areaName, 'npcs', this.state.MobFactory);
     Logger.verbose(`\t\tLOAD: Rooms...`);
     definition.rooms  = await this.loadEntities(bundle, areaName, 'rooms', this.state.RoomFactory);
+    Logger.verbose(`\t\tLOAD: Dialogs...`);
+    definition.dialogs  = await this.loadEntities(bundle, areaName, 'dialogs', this.state.DialogFactory);
     Logger.verbose('\t\tDone.');
 
     for (const npcRef of definition.npcs) {
