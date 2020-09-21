@@ -6,7 +6,8 @@ const fs = require('fs'),
     Data = require('./Data'),
     Area = require('./Area'),
     Command = require('./Command'),
-    CommandType = require('./CommandType'),
+    CommandType = require('./CommandType'),,
+    Dialog = require('./Dialog'),
     Item = require('./Item'),
     Npc = require('./Npc'),
     QuestGoal = require('./QuestGoal'),
@@ -15,8 +16,7 @@ const fs = require('fs'),
     Skill = require('./Skill'),
     SkillType = require('./SkillType'),
     Helpfile = require('./Helpfile'),
-    Logger = require('./Logger')
-;
+    Logger = require('./Logger');
 
 const { AttributeFormula } = require('./Attribute');
 
@@ -289,7 +289,7 @@ class BundleManager {
     Logger.verbose(`\t\tLOAD: Rooms...`);
     definition.rooms  = await this.loadEntities(bundle, areaName, 'rooms', this.state.RoomFactory);
     Logger.verbose(`\t\tLOAD: Dialogs...`);
-    definition.dialogs  = await this.loadEntities(bundle, areaName, 'dialogs', this.state.DialogFactory);
+    definition.dialogs  = await this.loadDialogs(bundle, areaName);
     Logger.verbose('\t\tDone.');
 
     for (const npcRef of definition.npcs) {
@@ -353,6 +353,36 @@ class BundleManager {
       }
 
       return entityRef;
+    });
+  }
+
+  /**
+   * Load an entity (item/npc/room) from file
+   * @param {string} bundle
+   * @param {string} areaName
+   * @param {string} type
+   * @return {Array<entityReference>}
+   */
+  async loadDialogs(bundle, areaName) {
+    const type = 'dialogs';
+    const loader = this.loaderRegistry.get(type);
+    loader.setBundle(bundle);
+    loader.setArea(areaName);
+
+    if (!await loader.hasData()) {
+      return [];
+    }
+
+    const entities = await loader.fetchAll();
+    if (!entities) {
+      Logger.warn(`\t\t\t${type} has an invalid value [${entities}]`);
+      return [];
+    }
+
+    return entities.map(entity => {
+      const dialog = new Dialog(areaName, entity);
+      this.state.DialogManager.addDialog(dialog);
+      return dialog;
     });
   }
 
