@@ -27,7 +27,15 @@ class EntityFactory {
    * @return {Object}
    */
   getDefinition(entityRef) {
-    return this.entities.get(entityRef);
+    const def = this.entities.get(entityRef);
+    if (def && def.base) {
+      const baseDef = this.getDefinition(def.base);
+      if (!baseDef) {
+        throw new Error(`Base Entity "${def.base}" not found for ${entityRef}`);
+      }
+      return {...baseDef, ...def};
+    }
+    return def;
   }
 
   /**
