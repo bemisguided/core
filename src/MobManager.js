@@ -26,6 +26,11 @@ class MobManager {
       room.area.removeNpc(mob);
       room.removeNpc(mob, true);
     }
+    const sourceRoom = mob.sourceRoom;
+    if (sourceRoom) {
+      sourceRoom.area.removeNpc(mob);
+      sourceRoom.removeNpc(mob, true);
+    }
     mob.__pruned = true;
     mob.removeAllListeners();
     this.mobs.delete(mob.uuid);
