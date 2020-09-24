@@ -21,7 +21,22 @@ class MobFactory extends EntityFactory {
     const npc = this.createByType(area, entityRef, Npc);
     npc.area = area;
     return npc;
+  }  
+
+  /**
+   * Handle the merge of a base definition with a target 
+   * definition.
+   * 
+   * @param {Object} def 
+   * @param {Object} baseDef 
+   */
+  mergeDefinitions(def, baseDef) {
+    const { attributes: baseAttributes, metadata: baseMetadata } = baseDef;
+    const attributes = { ...baseAttributes, ...def.attributes }
+    const metadata = { ...baseMetadata, ...def.metadata }
+    return {...baseDef, ...def, attributes, metadata };
   }
+
 }
 
 module.exports = MobFactory;
