@@ -39,6 +39,17 @@ class EntityFactory {
   }
 
   /**
+   * Handle the merge of a base definition with a target 
+   * definition.
+   * 
+   * @param {Object} def 
+   * @param {Object} baseDef 
+   */
+  mergeDefinitions(def, baseDef) {
+    return {...baseDef, ...def };
+  }
+  
+  /**
    * @param {string} entityRef
    * @param {Object} def
    */
