@@ -20,6 +20,20 @@ class RoomFactory extends EntityFactory {
     npc.area = area;
     return npc;
   }
+
+  /**
+   * Handle the merge of a base definition with a target 
+   * definition.
+   * 
+   * @param {Object} def 
+   * @param {Object} baseDef 
+   */
+  mergeDefinitions(def, baseDef) {
+    const { metadata: baseMetadata } = baseDef;
+    const metadata = { ...baseMetadata, ...def.metadata }
+    return {...baseDef, ...def, metadata };
+  }
+  
 }
 
 module.exports = RoomFactory;
