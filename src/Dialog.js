@@ -3,9 +3,12 @@
 const GameEntity = require('./GameEntity');
 
 class Dialog extends GameEntity {
-  constructor (areaName, def) {
+
+  static DEFAULT_TREE = 'default';
+
+  constructor (area, def) {
     super();
-    const validate = [ 'id', 'default' ];
+    const validate = [ 'id', 'trees' ];
 
     for (const prop of validate) {
       if (!(prop in def)) {
@@ -13,36 +16,46 @@ class Dialog extends GameEntity {
       }
     }
 
-    this.areaName = areaName;
+    this.areaName = area.name;
     this.id = def.id;
     this.entityReference = this.areaName + ':' + def.id;
-    this.dialogs = {};
-    Object.entries(def).forEach(([ k, v ]) => {
-      if (k === 'id') {
-        return; 
+    this.trees = new Map();
+    def.trees.forEach(tree => {
+      if (!tree.id) {
+        throw new ReferenceError('Dialog Tree is missing a required [id] property');
       }
-      this.dialogs[k] = v;
+      if (!Array.isArray(tree.script)) {
+        throw new ReferenceError('Dialog Tree is missing a required [script] array');
+      }
+      this.trees.set(tree.id, tree);
     });
+    if (!this.trees.get(Dialog.DEFAULT_TREE)) {
+      throw new ReferenceError(`Dialog requires "${Dialog.DEFAULT_TREE}" Dialog Tree`);
+    }
   }
 
-  getDialogTree(id = 'default') {
-    const tree = this.dialogs[id];
+  getDialogTrees() {
+    return [ ...this.trees.values() ];
+  }
+
+  getDialogTree(treeId = 'default') {
+    const tree = this.trees.get(treeId);
     if (!tree) {
-      throw new Error(`Dialog Tree "${id}" not found for Dialog [${this.id}]`);
+      throw new Error(`Dialog Tree "${treeId}" not found for Dialog [${this.id}]`);
     }
-    // console.log(tree)
     return tree;
   }
 
-  getDialogNode(tree, id) {
-    const branch = this.getDialogTree(tree)[id];
-    if (!branch) {
-      throw new Error(`Dialog Node "${id}" not found for Dialog Tree "${tree}" Dialog [${this.id}]`);
+  getDialogNode(treeId, nodeId) {
+    const tree = this.getDialogTree(treeId);
+    const node = tree.script.find(s => s.id === nodeId);
+    if (!node) {
+      throw new Error(`Dialog Node "${nodeId}" not found for Dialog Tree "${treeId}" Dialog [${this.id}]`);
     }
-    if (!branch.prompts) {
-      branch.prompts = [];
+    if (!node.prompts) {
+      node.prompts = [];
     }
-    return branch;
+    return node;
   }
 
 }
