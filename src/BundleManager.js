@@ -343,13 +343,16 @@ class BundleManager {
       const entityRef = factory.createEntityRef(areaName, entity.id);
       factory.setDefinition(entityRef, entity);
       if (entity.script) {
-        const entityScript = `${scriptPath}/${type}/${entity.script}.js`;
-        if (!fs.existsSync(entityScript)) {
-          Logger.warn(`\t\t\t[${entityRef}] has non-existent script "${entity.script}"`);
-        } else {
-          Logger.verbose(`\t\t\tLoading Script [${entityRef}] ${entity.script}`);
-          this.loadEntityScript(factory, entityRef, entityScript);
-        }
+        const scripts = Array.isArray(entity.script) ? entity.script : [entity.script];
+        scripts.forEach(script => {
+          const entityScript = `${scriptPath}/${type}/${script}.js`;
+          if (!fs.existsSync(entityScript)) {
+            Logger.warn(`\t\t\t[${entityRef}] has non-existent script "${script}"`);
+          } else {
+            Logger.verbose(`\t\t\tLoading Script [${entityRef}] ${script}`);
+            this.loadEntityScript(factory, entityRef, entityScript);
+          }
+        });
       }
 
       return entityRef;
