@@ -31,10 +31,18 @@ class MobFactory extends EntityFactory {
    * @param {Object} baseDef 
    */
   mergeDefinitions(def, baseDef) {
-    const { attributes: baseAttributes, metadata: baseMetadata } = baseDef;
-    const attributes = { ...baseAttributes, ...def.attributes }
-    const metadata = { ...baseMetadata, ...def.metadata }
-    return {...baseDef, ...def, attributes, metadata };
+    const { 
+      keywords: baseKeywords,
+      attributes: baseAttributes, 
+      metadata: baseMetadata, 
+      behaviors: baseBehaviors,
+    } = baseDef;
+    const defKeywords = def.keywords || [];
+    const attributes = { ...baseAttributes, ...def.attributes };
+    const metadata = { ...baseMetadata, ...def.metadata };
+    const behaviors = { ...baseBehaviors, ...def.behaviors };
+    const keywords = baseKeywords.concat(defKeywords.filter((k) => baseKeywords.indexOf(k) < 0))
+    return {...baseDef, ...def, attributes, metadata, behaviors, keywords };
   }
 
 }

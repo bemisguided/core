@@ -29,11 +29,16 @@ class EntityFactory {
   getDefinition(entityRef) {
     const def = this.entities.get(entityRef);
     if (def && def.base) {
-      const baseDef = this.getDefinition(def.base);
-      if (!baseDef) {
-        throw new Error(`Base Entity "${def.base}" not found for ${entityRef}`);
-      }
-      return {...baseDef, ...def};
+      const bases = Array.isArray(def.base) ? def.base : [def.base];
+      let finalBase = {};
+      bases.forEach(base => {
+        const baseDef = this.getDefinition(base);
+        if (!baseDef) {
+          throw new Error(`Base Entity "${base}" not found for ${entityRef}`);
+        }
+        finalBase = this.mergeDefinitions(finalBase, baseDef);
+      });
+      return this.mergeDefinitions(def, finalBase);
     }
     return def;
   }
