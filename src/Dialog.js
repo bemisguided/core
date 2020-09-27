@@ -12,11 +12,11 @@ class Dialog extends GameEntity {
 
     for (const prop of validate) {
       if (!(prop in def)) {
-        throw new ReferenceError(`Dialog in area [${areaName}] missing required property [${prop}]`);
+        throw new ReferenceError(`Dialog in area [${area}] missing required property [${prop}]`);
       }
     }
 
-    this.areaName = area.name;
+    this.areaName = area;
     this.id = def.id;
     this.entityReference = this.areaName + ':' + def.id;
     this.trees = new Map();
