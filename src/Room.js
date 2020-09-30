@@ -43,6 +43,7 @@ class Room extends GameEntity {
       z: def.coordinates[2],
     } : null;
     this.description = def.description;
+    this.additionalDescription = def.additionalDescription;
     this.entityReference = this.area.name + ':' + def.id;
     this.exits = def.exits || [];
     this.id = def.id;
